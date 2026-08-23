@@ -10,7 +10,7 @@ fn main() {
 
     let body_id = world.add_body(RigidBody::new(
         Vector3::new(0.0, 10.0, 0.0),
-        UnitQuaternion::identity(),
+        UnitQuaternion::from_euler_angles(4.0_f32.to_radians(), 0.0, 0.0),
         2.0,
     ));
 
@@ -28,9 +28,10 @@ fn test(world: &mut World, duration: f32, dt: f32, drone: &mut Drone) {
         {
             if time < 3.0 {
                 // Hover: 19.62 N total for a 2 kg drone
-                drone.set_motor(19.62, Vector3::new(0.0, 0.0, 0.0));
+                drone
+                    .flightcontroller
+                    .set_target_orientation(UnitQuaternion::identity());
             } else {
-                drone.set_motor(19.62, Vector3::new(0.0, 0.0, 2.0));
             }
         }
 

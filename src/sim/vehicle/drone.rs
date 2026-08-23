@@ -1,7 +1,7 @@
 use nalgebra::Vector3;
 
 use crate::sim::{
-    vehicle::{Engine, MotorSystem},
+    vehicle::{Engine, FlightController, MotorSystem},
     world::{BodyId, World},
 };
 
@@ -10,6 +10,7 @@ pub struct Drone {
 
     // Components
     pub motorsystem: MotorSystem,
+    pub flightcontroller: FlightController,
 }
 
 impl Drone {
@@ -24,12 +25,18 @@ impl Drone {
         Drone {
             body,
             motorsystem: motorsystem,
+            flightcontroller: FlightController::new(19.62),
         }
     }
 
     pub fn update(&mut self, world: &mut World) {
-        self.motorsystem.update();
         let body = world.mut_body(&self.body);
+        let command = self.flightcontroller.update(body);
+
+        self.motorsystem
+            .set_motor(command.collective_thrust, command.desired_torque);
+
+        self.motorsystem.update();
 
         for engine in &self.motorsystem.motors {
             let local_force = engine.force();
