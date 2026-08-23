@@ -1,6 +1,7 @@
 mod sim;
 
-use crate::sim::{drone::Drone, rigidbody::RigidBody, world::World};
+use crate::sim::vehicle::drone::Drone;
+use crate::sim::world::{RigidBody, World};
 use nalgebra::{UnitQuaternion, Vector3};
 
 fn main() {

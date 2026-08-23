@@ -1,4 +1,4 @@
-use crate::sim::rigidbody::{BodyId, RigidBody};
+use crate::sim::world::{BodyId, RigidBody};
 use nalgebra::Vector3;
 
 pub struct World {

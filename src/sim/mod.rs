@@ -1,4 +1,2 @@
-pub mod drone;
-pub mod physics;
-pub mod rigidbody;
+pub mod vehicle;
 pub mod world;

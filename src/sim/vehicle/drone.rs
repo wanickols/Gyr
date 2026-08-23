@@ -1,6 +1,6 @@
-use crate::sim::rigidbody::BodyId;
-use crate::sim::world::World;
 use nalgebra::Vector3;
+
+use crate::sim::world::{BodyId, World};
 
 pub struct Engine {
     pub position: Vector3<f32>,

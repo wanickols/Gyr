@@ -1,5 +1,6 @@
-use crate::sim::physics;
 use nalgebra::{UnitQuaternion, Vector3};
+
+use crate::sim::world::physics;
 
 pub struct BodyId(pub usize);
 
