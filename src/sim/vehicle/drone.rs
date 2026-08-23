@@ -1,53 +1,37 @@
 use nalgebra::Vector3;
 
-use crate::sim::world::{BodyId, World};
-
-pub struct Engine {
-    pub position: Vector3<f32>,
-    pub thrust: f32,
-}
-
-impl Engine {
-    pub fn new(position: Vector3<f32>) -> Self {
-        Engine {
-            position,
-            thrust: 0.0,
-        }
-    }
-
-    pub fn torque(&self) -> Vector3<f32> {
-        self.position.cross(&self.force())
-    }
-
-    pub fn set_thrust(&mut self, thrust: f32) {
-        self.thrust = thrust;
-    }
-
-    //Private
-    fn force(&self) -> Vector3<f32> {
-        Vector3::new(0.0, self.thrust, 0.0)
-    }
-}
+use crate::sim::{
+    vehicle::{Engine, MotorSystem},
+    world::{BodyId, World},
+};
 
 pub struct Drone {
     pub body: BodyId,
 
     // Components
-    pub engines: [Engine; 4],
+    pub motorsystem: MotorSystem,
 }
 
 impl Drone {
     pub fn new(body: BodyId) -> Self {
+        let mut motorsystem = MotorSystem::new();
+
+        motorsystem.add_motor(Engine::new(Vector3::new(0.5, 0.0, 0.5)));
+        motorsystem.add_motor(Engine::new(Vector3::new(-0.5, 0.0, 0.5)));
+        motorsystem.add_motor(Engine::new(Vector3::new(0.5, 0.0, -0.5)));
+        motorsystem.add_motor(Engine::new(Vector3::new(-0.5, 0.0, -0.5)));
+
         Drone {
             body,
-            engines: Drone::init_engines(),
+            motorsystem: motorsystem,
         }
     }
 
     pub fn update(&mut self, world: &mut World) {
+        self.motorsystem.update();
         let body = world.mut_body(&self.body);
 
-        for engine in &self.engines {
+        for engine in &self.motorsystem.motors {
             let local_force = engine.force();
             let world_force = body.orientation.transform_vector(&local_force);
 
@@ -63,19 +47,8 @@ impl Drone {
         }
     }
 
-    pub fn set_thrust(&mut self, engine_index: usize, thrust: f32) {
-        if engine_index < self.engines.len() {
-            self.engines[engine_index].set_thrust(thrust);
-        }
-    }
-
-    //Private
-    fn init_engines() -> [Engine; 4] {
-        [
-            Engine::new(Vector3::new(-0.5, 0.0, 0.5)),
-            Engine::new(Vector3::new(0.5, 0.0, 0.5)),
-            Engine::new(Vector3::new(-0.5, 0.0, -0.5)),
-            Engine::new(Vector3::new(0.5, 0.0, -0.5)),
-        ]
+    pub fn set_motor(&mut self, collective_thrust: f32, desired_torque: Vector3<f32>) {
+        self.motorsystem
+            .set_motor(collective_thrust, desired_torque);
     }
 }

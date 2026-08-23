@@ -1,6 +1,6 @@
 mod sim;
 
-use crate::sim::vehicle::drone::Drone;
+use crate::sim::vehicle::Drone;
 use crate::sim::world::{RigidBody, World};
 use nalgebra::{UnitQuaternion, Vector3};
 
@@ -28,17 +28,9 @@ fn test(world: &mut World, duration: f32, dt: f32, drone: &mut Drone) {
         {
             if time < 3.0 {
                 // Hover: 19.62 N total for a 2 kg drone
-                drone.set_thrust(0, 4.905);
-                drone.set_thrust(1, 4.905);
-                drone.set_thrust(2, 4.905);
-                drone.set_thrust(3, 4.905);
+                drone.set_motor(19.62, Vector3::new(0.0, 0.0, 0.0));
             } else {
-                // Increase thrust on one side, decrease on the other.
-                // Same total thrust, but now we create torque.
-                drone.set_thrust(0, 6.0);
-                drone.set_thrust(1, 3.81);
-                drone.set_thrust(2, 6.0);
-                drone.set_thrust(3, 3.81);
+                drone.set_motor(19.62, Vector3::new(0.0, 0.0, 2.0));
             }
         }
 
