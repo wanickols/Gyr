@@ -20,16 +20,29 @@ impl World {
 
     pub fn step(&mut self, dt: f32) {
         for drone in &mut self.drones {
-            // Apply gravity to the drone's velocity
-            let gravity_force = Vector3::new(0.0, -self.gravity * drone.mass, 0.0);
-            physics::apply_force(&mut drone.velocity, gravity_force, drone.mass, dt);
-
-            let world_thrust = drone.orientation * drone.thrust;
-            //apply thrust
-            physics::apply_force(&mut drone.velocity, world_thrust, drone.mass, dt);
-
-            //move drone
-            physics::integrate_position(&mut drone.position, drone.velocity, dt);
+            World::apply_gravity(self.gravity, dt, drone);
+            World::apply_linear(dt, drone);
+            World::apply_rotational(dt, drone);
         }
+    }
+
+    fn apply_gravity(gravity: f32, dt: f32, drone: &mut Drone) {
+        let gravity_force = Vector3::new(0.0, -gravity * drone.mass, 0.0);
+        physics::apply_force(&mut drone.velocity, gravity_force, drone.mass, dt);
+    }
+
+    fn apply_linear(dt: f32, drone: &mut Drone) {
+        let local_thrust = drone.total_thrust();
+        let world_thrust = drone.orientation * local_thrust;
+
+        physics::apply_force(&mut drone.velocity, world_thrust, drone.mass, dt);
+        physics::apply_velocity(&mut drone.position, drone.velocity, dt);
+    }
+
+    fn apply_rotational(dt: f32, drone: &mut Drone) {
+        let total_torque = drone.total_torque();
+
+        physics::apply_torque(&mut drone.angular_velocity, total_torque, drone.inertia, dt);
+        physics::apply_angular_velocity(&mut drone.orientation, drone.angular_velocity, dt);
     }
 }
