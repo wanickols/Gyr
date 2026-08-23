@@ -1,31 +1,30 @@
 mod sim;
 
-use crate::sim::{drone::Drone, world::World};
+use crate::sim::{drone::Drone, rigidbody::RigidBody, world::World};
 use nalgebra::{UnitQuaternion, Vector3};
 
 fn main() {
     //Init World
     let mut world = World::new(9.81);
 
-    //Add Drone
-    world.add_drone(Drone::new(
+    let body_id = world.add_body(RigidBody::new(
         Vector3::new(0.0, 10.0, 0.0),
         UnitQuaternion::identity(),
         2.0,
     ));
 
-    test(&mut world, 10.0, 0.01);
+    let mut falcon = Drone::new(body_id);
+
+    test(&mut world, 10.0, 0.01, &mut falcon);
 }
 
 // Simulate
-fn test(world: &mut World, duration: f32, dt: f32) {
+fn test(world: &mut World, duration: f32, dt: f32, drone: &mut Drone) {
     let mut time = 0.0;
     let mut step = 0;
 
     while time < duration {
         {
-            let drone = &mut world.drones[0];
-
             if time < 3.0 {
                 // Hover: 19.62 N total for a 2 kg drone
                 drone.set_thrust(0, 4.905);
@@ -42,47 +41,13 @@ fn test(world: &mut World, duration: f32, dt: f32) {
             }
         }
 
-        world.step(dt);
-
+        drone.update(world);
         if step % 100 == 0 {
-            let drone = &world.drones[0];
-
-            let local_thrust = drone.total_thrust();
-            let world_thrust = drone.orientation * local_thrust;
-            let total_torque = drone.total_torque();
-            let (roll, pitch, yaw) = drone.orientation.euler_angles();
-
-            println!(
-                "\
-t={:.0}s
-  pos:      ({:>8.2}, {:>8.2}, {:>8.2})
-  vel:      ({:>8.2}, {:>8.2}, {:>8.2})
-  thrust:   ({:>8.2}, {:>8.2}, {:>8.2})
-  torque:   ({:>8.2}, {:>8.2}, {:>8.2})
-  ang vel:  ({:>8.2}, {:>8.2}, {:>8.2})
-  euler:    ({:>8.2}°, {:>8.2}°, {:>8.2}°)
-",
-                time,
-                drone.position.x,
-                drone.position.y,
-                drone.position.z,
-                drone.velocity.x,
-                drone.velocity.y,
-                drone.velocity.z,
-                world_thrust.x,
-                world_thrust.y,
-                world_thrust.z,
-                total_torque.x,
-                total_torque.y,
-                total_torque.z,
-                drone.angular_velocity.x,
-                drone.angular_velocity.y,
-                drone.angular_velocity.z,
-                roll.to_degrees(),
-                pitch.to_degrees(),
-                yaw.to_degrees(),
-            );
+            let body = world.mut_body(&drone.body);
+            body.print_state(time);
         }
+
+        world.step(dt);
 
         time += dt;
         step += 1;
