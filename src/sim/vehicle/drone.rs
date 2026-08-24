@@ -14,7 +14,7 @@ pub struct Drone {
 }
 
 impl Drone {
-    pub fn new(body: BodyId) -> Self {
+    pub fn new(body: BodyId, max_thrust: f32) -> Self {
         let mut motorsystem = MotorSystem::new();
 
         motorsystem.add_motor(Engine::new(Vector3::new(0.5, 0.0, 0.5)));
@@ -25,7 +25,7 @@ impl Drone {
         Drone {
             body,
             motorsystem: motorsystem,
-            flightcontroller: FlightController::new(19.62),
+            flightcontroller: FlightController::new(max_thrust),
         }
     }
 

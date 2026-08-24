@@ -6,7 +6,7 @@ use nalgebra::{UnitQuaternion, Vector3};
 
 fn main() {
     //Init World
-    let mut world = World::new(9.81);
+    let mut world = World::new();
 
     let body_id = world.add_body(RigidBody::new(
         Vector3::new(0.0, 10.0, 0.0),
@@ -14,27 +14,21 @@ fn main() {
         2.0,
     ));
 
-    let mut falcon = Drone::new(body_id);
+    let mut falcon = Drone::new(body_id, 25.0);
 
-    test(&mut world, 10.0, 0.01, &mut falcon);
+    test(&mut world, 40.0, 0.01, &mut falcon);
 }
 
 // Simulate
 fn test(world: &mut World, duration: f32, dt: f32, drone: &mut Drone) {
     let mut time = 0.0;
     let mut step = 0;
+    drone
+        .flightcontroller
+        .set_target_orientation(UnitQuaternion::identity());
 
+    drone.flightcontroller.set_target_altitude(15.0);
     while time < duration {
-        {
-            if time < 3.0 {
-                // Hover: 19.62 N total for a 2 kg drone
-                drone
-                    .flightcontroller
-                    .set_target_orientation(UnitQuaternion::identity());
-            } else {
-            }
-        }
-
         drone.update(world);
         if step % 100 == 0 {
             let body = world.mut_body(&drone.body);

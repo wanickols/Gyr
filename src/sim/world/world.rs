@@ -1,17 +1,15 @@
 use crate::sim::world::{BodyId, RigidBody};
 use nalgebra::Vector3;
 
+pub static GRAVITY: f32 = 9.81;
+
 pub struct World {
     pub bodies: Vec<RigidBody>,
-    gravity: f32,
 }
 
 impl World {
-    pub fn new(gravity: f32) -> Self {
-        World {
-            bodies: Vec::new(),
-            gravity,
-        }
+    pub fn new() -> Self {
+        World { bodies: Vec::new() }
     }
 
     pub fn add_body(&mut self, body: RigidBody) -> BodyId {
@@ -25,7 +23,7 @@ impl World {
 
     pub fn step(&mut self, dt: f32) {
         for body in &mut self.bodies {
-            let gravity_force = Vector3::new(0.0, -self.gravity * body.mass, 0.0);
+            let gravity_force = Vector3::new(0.0, -GRAVITY * body.mass, 0.0);
             body.apply_force(gravity_force);
 
             body.integrate(dt);
