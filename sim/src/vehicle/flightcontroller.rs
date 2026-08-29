@@ -1,7 +1,7 @@
 use nalgebra::{UnitQuaternion, Vector3};
 
-use crate::sim::world::RigidBody;
-use crate::sim::world::world::GRAVITY;
+use crate::world::RigidBody;
+use crate::world::world::GRAVITY;
 
 pub struct FlightCommand {
     pub collective_thrust: f32,

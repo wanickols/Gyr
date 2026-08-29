@@ -1,6 +1,6 @@
 use nalgebra::Vector3;
 
-use crate::sim::{
+use crate::{
     vehicle::{Engine, FlightController, MotorSystem},
     world::{BodyId, World},
 };

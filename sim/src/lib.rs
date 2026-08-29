@@ -1,4 +1,8 @@
-pub mod sim;
+pub mod simulation;
+pub mod vehicle;
+pub mod world;
+
+pub use simulation::Simulation;
 
 //TODO, add simulation
 //I want a simulation class, then main can just use that

@@ -1,4 +1,4 @@
-use crate::sim::vehicle::Engine;
+use crate::vehicle::Engine;
 use nalgebra::Vector3;
 
 pub struct MotorSystem {

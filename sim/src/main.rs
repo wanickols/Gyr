@@ -1,7 +1,7 @@
-use workspace::sim::Simulation;
+use gyr_sim::Simulation;
 
 fn main() {
     let mut sim = Simulation::new();
 
-    sim.sim_drone(10.0, 0.01);
+    sim.test(10.0, 0.01);
 }

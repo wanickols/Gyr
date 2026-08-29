@@ -48,6 +48,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c426daf70099baff33fac0ba85151c42424861c56828cef9ba02dacb78eb6b26"
 
 [[package]]
+name = "gyr-sim"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+]
+
+[[package]]
 name = "matrixmultiply"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -212,11 +219,4 @@ checksum = "de2aaf408e58689c2096682331b1f42bb2d9f2ed6b11560407d023cd0a6c634e"
 dependencies = [
  "bytemuck",
  "safe_arch",
-]
-
-[[package]]
-name = "workspace"
-version = "0.1.0"
-dependencies = [
- "nalgebra",
 ]
